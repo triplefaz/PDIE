@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #ffffff;
+        }
+
+        header {
+            background-color: #fff;
+            padding: 10px 20px;
+            margin-left: 8.1%;
+            display: flex;
+            width: fit-content;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        header nav button {
+            background-color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin-right: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        header nav button:hover {
+            background-color: #dadada;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+        }
+
+        .left-column, .right-column {
+            width: 48%;
+        }
+
+        .address-section, .delivery-date-section, .payment-method-section {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+
+        .shopping-cart-section {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            width: 100%;
+        }
+
+        .address-section h2, .delivery-date-section h2, .payment-method-section h2, .shopping-cart-section h2 {
+            margin-top: 0;
+        }
+
+        .address-section label, .delivery-date-section label, .payment-method-section label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .address-section input, .delivery-date-section input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .payment-method-section label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .payment-details p {
+            margin: 5px 0;
+        }
+
+        .shopping-cart-section table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .shopping-cart-section th, .shopping-cart-section td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .shopping-cart-section th {
+            background-color: #e0e0e0;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .confirm-order {
+            width: 150px; /* Fixed width */
+            height: 40px; /* Fixed height */
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            font-size: 13px;
+            border: 1px dotted red; /* Added red dotted border */
+            cursor: pointer;
+            box-sizing: border-box; /* Ensures padding and border are included in the total width and height */
+        }
+
+/* Popup form styles */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 40px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.popup h2 {
+    margin-top: 0;
+}
+
+.popup input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.popup .button-container {
+    text-align: center;
+}
+
+.popup .confirm-order {
+    width: auto;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
+
+        /* Styling for QR code section */
+        .qr-code-section {
+            border: 1px solid #ccc;
+            padding: 20px;
+            background-color: #f9f9f9;
+            text-align: center;
+            margin-top: 20px;
+            padding-bottom: 42px;
+        }
+
+        .qr-code-section img {
+            max-width: 50%;
+            height: 50%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <button id="guestBtn">GUEST</button>
+            <button id="registerBtn">REGISTER</button>
+            <button id="loginBtn">LOGIN</button>
+        </nav>
+    </header>
+    <main>
+        <div class="container">
+            <div class="left-column">
+                <div class="address-section">
+                    <h2>PAYMENT ADDRESS</h2>
+                    <label>FIRST NAME:</label>
+                    <input type="text" name="payment_first_name" required>
+                    <label>LAST NAME:</label>
+                    <input type="text" name="payment_last_name" required>
+                    <label>EMAIL:</label>
+                    <input type="email" name="payment_email" required>
+                    <label>NO. TEL:</label>
+                    <input type="text" name="payment_phone" required>
+                </div>
+                <div class="address-section">
+                    <h2>SHIPPING ADDRESS</h2>
+                    <label>FIRST NAME:</label>
+                    <input type="text" name="shipping_first_name" required>
+                    <label>LAST NAME:</label>
+                    <input type="text" name="shipping_last_name" required>
+                    <label>ADDRESS:</label>
+                    <input type="text" name="shipping_address" required>
+                    <label>CITY:</label>
+                    <input type="text" name="shipping_city" required>
+                    <label>POST CODE:</label>
+                    <input type="text" name="shipping_post_code" required>
+                    <label>REGION:</label>
+                    <input type="text" name="shipping_region" required>
+                </div>
+            </div>
+            <div class="right-column">
+                <div class="delivery-date-section">
+                    <h2>PLEASE INSERT PREFERRED DELIVERY DATE</h2>
+                    <input type="date" name="delivery_date" required>
+                </div>
+                <div class="payment-method-section">
+                    <h2>PAYMENT METHOD</h2>
+                    <label>
+                        <input type="radio" name="payment_method" value="bank_transfer" required>
+                        BANK TRANSFER
+                    </label>
+                    <label>
+                        <input type="radio" name="payment_method" value="cod" required>
+                        CASH ON DELIVERY (COD)
+                    </label><br>
+                    <label for="paymentReceipt">Payment Receipt:</label>
+                    <input type="file" id="paymentReceipt" name="payment_receipt" accept=".jpg, .jpeg, .png, .pdf"><br><br>
+
+                    <div class="payment-details">
+                        <p>Please transfer payment to:</p>
+                        <p>Amer</p>
+                        <p>1234567890</p>
+                        <p>Bank Rakyat</p><br>
+                        <p>Please email us your payment receipt for verification.</p>
+                        <p>Your order will not ship until we receive payment.</p>
+                    </div>
+                </div>
+                <div class="qr-code-section">
+                    <h2>SCAN QR CODE FOR PAYMENT</h2>
+                    <img src="{% static 'qr.jpg' %}" alt="QR Code" id="qrCodeImage">
+                </div>
+            </div>
+            
+            <div class="shopping-cart-section">
+                <h2>SHOPPING CART</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>IMAGE</th>
+                            <th>PRODUCT NAME</th>
+                            <th>MODEL</th>
+                            <th>QUANTITY</th>
+                            <th>UNIT PRICE</th>
+                            <th>TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cartTableBody">
+                        <!-- Cart items will be inserted here dynamically -->
+                    </tbody>
+                </table>
+            </div>
+            
+        </div>
+
+        <div class="popup" id="registerPopup">
+            <span class="close-button
+" onclick="closePopup('registerPopup')">X</span>
+<h2>REGISTER</h2>
+<form id="registerForm">
+<label>Email:</label>
+<input type="email" name="email" id="registerEmail" required>
+<label>Password:</label>
+<input type="password" name="password" id="registerPassword" required>
+<div class="button-container">
+<button type="submit" class="confirm-order">REGISTER</button>
+</div>
+</form>
+</div>
+
+
+    <div class="popup" id="loginPopup">
+        <span class="close-button" onclick="closePopup('loginPopup')">X</span>
+        <h2>LOGIN</h2>
+        <form id="loginForm">
+            <label>Email:</label>
+            <input type="email" name="email" id="loginEmail" required>
+            <label>Password:</label>
+            <input type="password" name="password" id="loginPassword" required>
+            <div class="button-container">
+                <button type="submit" class="confirm-order">LOGIN</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Add a button for payment -->
+    <div class="button-container">
+        <button class="confirm-order" id="paymentButton">PAY NOW</button>
+    </div>
+
+</main>
+
+<script>
+    // Event listener for registration form submission
+    const registerForm = document.getElementById('registerForm');
+    registerForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission
+
+        // Get email and password from form inputs
+        const email = document.getElementById('registerEmail').value;
+        const password = document.getElementById('registerPassword').value;
+
+        // Store user data in local storage
+        const user = {
+            email: email,
+            password: password
+        };
+        localStorage.setItem('user', JSON.stringify(user));
+
+        // Close registration popup
+        closePopup('registerPopup');
+
+        // Optionally, you can show a success message or perform other actions
+        alert('Registration successful. You can now proceed to login.');
+    });
+
+    // Event listener for login form submission
+    const loginForm = document.getElementById('loginForm');
+    loginForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission
+
+        // Get email and password from form inputs
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+
+        // Retrieve user data from local storage
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            const user = JSON.parse(storedUser);
+            if (user.email === email && user.password === password) {
+                // Login successful, you can proceed with further actions
+                alert('Login successful!');
+                closePopup('loginPopup');
+            } else {
+                alert('Invalid email or password. Please try again.');
+            }
+        } else {
+            alert('No user registered. Please register first.');
+        }
+    });
+
+    // Event listener for payment button click
+    const paymentButton = document.getElementById('paymentButton');
+    if (paymentButton) {
+        paymentButton.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default button behavior (form submission)
+
+            // Get all form data
+            const paymentFirstName = document.querySelector('input[name="payment_first_name"]').value;
+            const paymentLastName = document.querySelector('input[name="payment_last_name"]').value;
+            const paymentEmail = document.querySelector('input[name="payment_email"]').value;
+            const paymentPhone = document.querySelector('input[name="payment_phone"]').value;
+            const shippingFirstName = document.querySelector('input[name="shipping_first_name"]').value;
+            const shippingLastName = document.querySelector('input[name="shipping_last_name"]').value;
+            const shippingAddress = document.querySelector('input[name="shipping_address"]').value;
+            const shippingCity = document.querySelector('input[name="shipping_city"]').value;
+            const shippingPostCode = document.querySelector('input[name="shipping_post_code"]').value;
+            const shippingRegion = document.querySelector('input[name="shipping_region"]').value;
+            const deliveryDate = document.querySelector('input[name="delivery_date"]').value;
+            const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+
+            // Construct an object with all the data
+            const orderDetails = {
+                paymentFirstName: paymentFirstName,
+                paymentLastName: paymentLastName,
+                paymentEmail: paymentEmail,
+                paymentPhone: paymentPhone,
+                shippingFirstName: shippingFirstName,
+                shippingLastName: shippingLastName,
+                shippingAddress: shippingAddress,
+                shippingCity: shippingCity,
+                shippingPostCode: shippingPostCode,
+                shippingRegion: shippingRegion,
+                deliveryDate: deliveryDate,
+                paymentMethod: paymentMethod
+            };
+
+            // Store data in local storage
+            localStorage.setItem('orderDetails', JSON.stringify(orderDetails));
+
+            // Show popup message
+            showPopup('Thank you for purchasing our product!');
+        });
+    }
+
+// Function to close popup
+function closePopup(popup) {
+    if (popup) {
+        document.body.removeChild(popup);
+    }
+}
+
+    // Function to show popup message
+    function showPopup(message) {
+        // Create a new popup element
+        const popup = document.createElement('div');
+        popup.classList.add('popup');
+        popup.innerHTML = `
+            <h2>${message}</h2>
+            <button class="confirm-order" onclick="closePopup(this.parentNode)">Close</button>
+        `;
+        
+        // Append the popup to the document body
+        document.body.appendChild(popup);
+    }
+
+    // Fetch cart items from the server
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('/index/cart/')
+            .then(response => response.json())
+            .then(data => {
+                const cartItems = data.cart_items;
+                const cartTableBody = document.getElementById('cartTableBody');
+
+                // Clear any existing rows
+                cartTableBody.innerHTML = '';
+
+                // Loop through each cart item and create table rows
+                cartItems.forEach(item => {
+                    const row = document.createElement('tr');
+
+                    // Create cells for each piece of data
+                    const imageCell = document.createElement('td');
+                    const image = document.createElement('img');
+                    image.src = `{% static '${item.image}' %}`;
+                    image.style.maxWidth = '100px';
+                    imageCell.appendChild(image);
+
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = item.product_name;
+
+                    const modelCell = document.createElement('td');
+                    modelCell.textContent = item.model;
+
+                    const quantityCell = document.createElement('td');
+                    quantityCell.textContent = item.quantity;
+
+                    const unitPriceCell = document.createElement('td');
+                    unitPriceCell.textContent = `$${item.unit_price}`;
+
+                    const totalCell = document.createElement('td');
+                    totalCell.textContent = `$${item.total}`;
+
+                    // Append cells to the row
+                    row.appendChild(imageCell);
+                    row.appendChild(nameCell);
+                    row.appendChild(modelCell);
+                    row.appendChild(quantityCell);
+                    row.appendChild(unitPriceCell);
+                    row.appendChild(totalCell);
+
+                    // Append the row to the table body
+                    cartTableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching cart items:', error);
+            });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #ffffff;
+        }
+
+        header {
+            background-color: #fff;
+            padding: 10px 20px;
+            margin-left: 8.1%;
+            display: flex;
+            width: fit-content;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        header nav button {
+            background-color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin-right: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        header nav button:hover{
+            background-color: #dadada;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+        }
+
+        .left-column, .right-column {
+            width: 48%;
+        }
+
+        .address-section, .delivery-date-section, .payment-method-section {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+
+        .shopping-cart-section{
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            width: 2250px;
+        }
+
+        .address-section h2, .delivery-date-section h2, .payment-method-section h2, .shopping-cart-section h2 {
+            margin-top: 0;
+        }
+
+        .address-section label, .delivery-date-section label, .payment-method-section label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .address-section input, .delivery-date-section input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .payment-method-section label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .payment-details p {
+            margin: 5px 0;
+        }
+
+        .shopping-cart-section table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .shopping-cart-section th, .shopping-cart-section td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .shopping-cart-section th {
+            background-color: #e0e0e0;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .confirm-order {
+            width: 150px; /* Fixed width */
+            height: 40px; /* Fixed height */
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            font-size: 13px;
+            border: 1px dotted red; /* Added red dotted border */
+            cursor: pointer;
+            box-sizing: border-box; /* Ensures padding and border are included in the total width and height */
+        }
+
+        /* Popup form styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 40px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .popup h2 {
+            margin-top: 0;
+        }
+
+        .popup input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .popup .button-container {
+            text-align: center;
+        }
+
+        .popup .confirm-order {
+            width: auto;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        /* Styling for QR code section */
+        .qr-code-section {
+            border: 1px solid #ccc;
+            padding: 20px;
+            background-color: #f9f9f9;
+            text-align: center;
+            margin-top: 20px;
+            padding-bottom: 42px;
+        }
+
+        .qr-code-section img {
+            max-width: 50%;
+            height: 50%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <button id="guestBtn">GUEST</button>
+            <button id="registerBtn">REGISTER</button>
+            <button id="loginBtn">LOGIN</button>
+        </nav>
+    </header>
+    <main>
+        <div class="container">
+            <div class="left-column">
+                <div class="address-section">
+                    <h2>PAYMENT ADDRESS</h2>
+                    <label>FIRST NAME:</label>
+                    <input type="text" name="payment_first_name" required>
+                    <label>LAST NAME:</label>
+                    <input type="text" name="payment_last_name" required>
+                    <label>EMAIL:</label>
+                    <input type="email" name="payment_email" required>
+                    <label>NO. TEL:</label>
+                    <input type="text" name="payment_phone" required>
+                </div>
+                <div class="address-section">
+                    <h2>SHIPPING ADDRESS</h2>
+                    <label>FIRST NAME:</label>
+                    <input type="text" name="shipping_first_name" required>
+                    <label>LAST NAME:</label>
+                    <input type="text" name="shipping_last_name" required>
+                    <label>ADDRESS:</label>
+                    <input type="text" name="shipping_address" required>
+                    <label>CITY:</label>
+                    <input type="text" name="shipping_city" required>
+                    <label>POST CODE:</label>
+                    <input type="text" name="shipping_post_code" required>
+                    <label>REGION:</label>
+                    <input type="text" name="shipping_region" required>
+                </div>
+            </div>
+            <div class="right-column">
+                <div class="delivery-date-section">
+                    <h2>PLEASE INSERT PREFERRED DELIVERY DATE</h2>
+                    <input type="date" name="delivery_date" required>
+                </div>
+                <div class="payment-method-section">
+                    <h2>PAYMENT METHOD</h2>
+                    <label>
+                        <input type="radio" name="payment_method" value="bank_transfer" required>
+                        BANK TRANSFER
+                    </label>
+                    <label>
+                        <input type="radio" name="payment_method" value="cod" required>
+                        CASH ON DELIVERY (COD)
+                    </label>
+
+                    <div class="payment-details">
+                        <p>Please transfer payment to:</p><br>
+                        <p>Amer</p>
+                        <p>1234567890</p>
+                        <p>Bank Rakyat</p><br>
+                        <p>Please email us your payment receipt for verification.</p>
+                        <p>Your order will not ship until we receive payment.</p>
+                    </div>
+                </div>
+                <div class="qr-code-section">
+                    <h2>SCAN QR CODE FOR PAYMENT</h2>
+                    <img src="{% static 'qr.jpg' %}" alt="QR Code" id="qrCodeImage">
+                </div>
+            </div>
+            <div class="shopping-cart-section">
+                <h2>SHOPPING CART</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>IMAGE</th>
+                            <th>PRODUCT NAME</th>
+                            <th>QUANTITY</th>
+                            <th>UNIT PRICE</th>
+                            <th>TOTAL</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                        <tr>
+                            <td><img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="width: 50px;"></td>
+                            <td>{{ item.product.name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>${{ item.product.unit_price }}</td>
+                            <td>${{ item.total_price }}</td>
+                        </tr>
+                        <!-- Add more rows for other items in the shopping cart -->
+                    </tbody>
+                    
+                </table>
+            </div>
+        </div>
+
+        <!-- Popup forms -->
+        <div class="popup" id="registerPopup">
+            <span class="close-button" onclick="closePopup('registerPopup')">X</span>
+            <h2>REGISTER</h2>
+            <form>
+                <label>Email:</label>
+                <input type="email" name="email" required>
+                <label>Password:</label>
+                <input type="password" name="password" required>
+                <div class="button-container">
+                    <button type="submit" class="confirm-order">REGISTER</button>
+                </div>
+            </form>
+        </div>
+        
+
+        <div class="popup" id="loginPopup">
+            <span class="close-button" onclick="closePopup('loginPopup')">X</span>
+            <h2>LOGIN</h2>
+            <form>
+                <label>Email:</label>
+                <input type="email" name="email" required>
+                <label>Password:</label>
+                <input type="password" name="password" required>
+                <div class="button-container">
+                    <button type="submit" class="confirm-order">LOGIN</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="button-container">
+            <button type="submit" class="confirm-order">CONFIRM ORDER</button>
+        </div>
+    </main>
+
+    <script>
+        // Function to close popup
+        function closePopup(popupId) {
+            const popup = document.getElementById(popupId);
+            if (popup) {
+                popup.style.display = 'none';
+            }
+        }
+
+        // Event listeners for popup toggles
+        const guestBtn = document.getElementById('guestBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const loginBtn = document.getElementById('loginBtn');
+        const registerPopup = document.getElementById('registerPopup');
+        const loginPopup = document.getElementById('loginPopup');
+
+        guestBtn.addEventListener('click', function() {
+            alert('Implement guest functionality');
+        });
+
+        registerBtn.addEventListener('click', function() {
+            registerPopup.style.display = 'block';
+        });
+
+        loginBtn.addEventListener('click', function() {
+            loginPopup.style.display = 'block';
+        });
+
+        // Close popup when clicking outside the popup
+        window.onclick = function(event) {
+            if (event.target === registerPopup) {
+                registerPopup.style.display = 'none';
+            }
+            if (event.target === loginPopup) {
+                loginPopup.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            background-color: #fff;
+            padding: 10px 30px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .top-bar span {
+            color: #333;
+        }
+
+        .top-bar .account-options {
+            margin-right: auto; /* Pushes the account options to the left */
+        }
+
+        .account-options a {
+            margin-left: 10px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 5px 0;
+            margin-right: -0.6%; /* Centers the logo */
+        }
+
+        .logo img {
+            margin: 0;
+            height: auto;
+            width: 280px; /* Adjust width as necessary */
+        }
+
+        nav {
+            background-color: #90EE90;
+            padding: 10px 0;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .shopping-cart-section {
+            margin-top: 20px;
+        }
+
+        .shopping-cart-section h2 {
+            margin-top: 0;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .shopping-cart-section table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .shopping-cart-section th, .shopping-cart-section td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .shopping-cart-section th {
+            background-color: #e0e0e0;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .button-container button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #333;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .button-container button:hover {
+            background-color: #555;
+        }
+
+        .continue-shopping {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+
+        .continue-shopping:hover {
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="top-bar">
+            <div class="account-options">
+                <a href="#">MY ACCOUNT</a> - 
+                <a href="{% url 'cart' %}">CHECKOUT</a>
+            </div>
+        </div>
+            <div class="logo">
+                <img src="{% static 'logo_1.png' %}" alt="Logo">
+            </div>
+        
+    </header>
+    <nav>
+        <ul>
+            <li><a href="{% url 'home' %}">HOME</a></li>
+            <li><a href="{% url 'freshfish' %}">FRESH FISH</a></li>
+            <li><a href="{% url 'freshshellfish' %}">FRESH SHELLFISH</a></li>
+            <li><a href="{% url 'frozenshellfish' %}">FROZEN SHELLFISH</a></li>
+            <li><a href="#">CONTACT US</a></li>
+        </ul>
+    </nav>
+    <main>
+        <div class="container">
+            <div class="shopping-cart-section">
+                <h2>SHOPPING CART</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>IMAGE</th>
+                            <th>PRODUCT NAME</th>
+                            <th>MODEL</th>
+                            <th>QUANTITY</th>
+                            <th>UNIT PRICE</th>
+                            <th>TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <td> </td>
+                            <td>  </td>
+                            <td>  </td>
+                            <td> </td>
+                            <td> </td>
+                            <td> </td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+            <div class="button-container">
+                <button class="continue-shopping" onclick="window.location.href='/index'">CONTINUE SHOPPING</button>
+                <button class="checkout" onclick="window.location.href='/payment'">CHECKOUT</button>
+            </div>
+        </div>
+    </main>
+    <script>
+        // Function to retrieve and display cart items
+        function displayCartItems() {
+            // Retrieve cart items from local storage
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // Get the table body element where cart items will be displayed
+            let cartTableBody = document.querySelector('table tbody');
+
+            // Clear any existing rows in the table body
+            cartTableBody.innerHTML = '';
+
+            // Iterate over cart items and create rows for each item
+            cart.forEach(item => {
+                // Create a new table row element
+                let row = document.createElement('tr');
+
+                // Generate the HTML for each cell in the row
+                row.innerHTML = `
+                    <td><img src="{% static 'path/to/your/image.jpg' %}" alt="${item.productName}" width="50" height="50"></td>
+                    <td>${item.productName}</td>
+                    <td>Model</td>
+                    <td>1</td>
+                    <td>${item.productPrice}</td>
+                    <td>${item.productPrice}</td>
+                `;
+
+                // Append the row to the table body
+                cartTableBody.appendChild(row);
+            });
+        }
+
+        // Call the function to display cart items when the page loads
+        window.onload = displayCartItems;
+
+        // Function to navigate to payment page with cart items
+        function navigateToPayment() {
+        const params = new URLSearchParams();
+        cartItems.forEach((item, index) => {
+        Object.entries(item).forEach(([key, value]) => {
+            params.append(`cart[${index}][${key}]`, value);
+        });
+    });
+
+    window.location.href = `/index/payment/?${params.toString()}`;
+}
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        /* Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+        }
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 60px;
+            background-color: #333;
+            padding: 10px;
+        }
+        .menu-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #fff;
+            margin: 10px auto;
+        }
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #ffffff;
+        }
+        .header {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .logo {
+            text-align: center;
+            padding: 5px 0;
+        }
+        .logo img {
+            margin: 0;
+            height: auto;
+            width: 90%;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background-color: #ddd;
+            padding: 20px;
+            width: 100px;
+            text-align: center;
+            font-size: 18px;
+        }
+        .tables {
+            display: flex;
+            justify-content: space-around;
+        }
+        .table {
+            width: 45%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        h3 {
+            margin-top: 0;
+        }
+        .crud-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .crud-buttons a, .crud-buttons button {
+            padding: 5px 10px;
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 3px;
+        }
+        .crud-buttons button {
+            cursor: pointer;
+        }
+        .status-dropdown {
+            width: 150px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        #orderForm, #stockForm {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        #orderForm input, #orderForm select, #orderForm button,
+        #stockForm input, #stockForm select, #stockForm button {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            flex: 1;
+        }
+        #orderForm button, #stockForm button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            flex: 0 1 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+            <div class="header">
+                <div class="logo">
+                    <img src="{% static 'logo_1.png' %}" alt="Logo">
+                </div>
+            </div>
+            <div class="stats">
+                <div class="stat-box">ORDER<br>001</div>
+                <div class="stat-box">EXPENSES<br>600</div>
+            </div>
+            <div class="tables">
+                <div class="table recent-orders">
+                    <h3>Recent Orders</h3>
+                    <div class="crud-buttons">
+                        <!-- Add Order Form -->
+                        <form id="orderForm">
+                            <input type="text" id="orderUser" placeholder="User" required>
+                            <input type="date" id="orderDate" required>
+                            <select id="orderStatus">
+                                <option value="processing">Processing</option>
+                                <option value="delivered">Delivered</option>
+                                <option value="shipped">Shipped</option>
+                            </select>
+                            <input type="text" id="orderProduct" placeholder="Product" required>
+                            <button type="submit">Add Order</button>
+                        </form>
+                    </div>
+                    <table id="recentOrdersTable">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Product</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentOrdersBody">
+                            <!-- Orders will be dynamically inserted here -->
+                            {% for order in orders %}
+                            <tr id="orderRow{{ order.id }}">
+                                <td>{{ order.user }}</td>
+                                <td>{{ order.date }}</td>
+                                <td>
+                                    <select class="status-dropdown">
+                                        <option value="processing" {% if order.status == 'processing' %} selected {% endif %}>Processing</option>
+                                        <option value="delivered" {% if order.status == 'delivered' %} selected {% endif %}>Delivered</option>
+                                        <option value="shipped" {% if order.status == 'shipped' %} selected {% endif %}>Shipped</option>
+                                    </select>
+                                </td>
+                                <td>{{ order.product }}</td>
+                                <td>
+                                    <div class="crud-buttons">
+                                        <button onclick="deleteOrder('{{ order.id }}')">Delete</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table stock">
+                    <h3>Stock</h3>
+                    <div class="crud-buttons">
+                        <!-- Add Stock Form -->
+                        <form id="stockForm">
+                            <input type="text" id="stockItem" placeholder="Item" required>
+                            <input type="number" id="stockIn" placeholder="In Stock" required>
+                            <input type="number" id="stockOut" placeholder="Out Stock" required>
+                            <input type="date" id="stockDate" required>
+                            <button type="submit">Add Stock</button>
+                        </form>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>In</th>
+                                <th>Out</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stockBody">
+                            <!-- Stock items will be dynamically inserted here -->
+                            {% for stock in stocks %}
+                            <tr id="stockRow{{ stock.id }}">
+                                <td>{{ stock.item }}</td>
+                                <td>{{ stock.in_stock }}</td>
+                                <td>{{ stock.out_stock }}</td>
+                                <td>{{ stock.date }}</td>
+                                <td>
+                                    <div class="crud-buttons">
+                                        <button onclick="deleteStock('{{ stock.id }}')">Delete</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.getElementById('orderForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Get form data
+        const user = document.getElementById('orderUser').value;
+        const date = document.getElementById('orderDate').value;
+        const status = document.getElementById('orderStatus').value;
+        const product = document.getElementById('orderProduct').value;
+
+        // Create a new row for the order table
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>${user}</td>
+            <td>${date}</td>
+            <td>
+                <select class="status-dropdown">
+                    <option value="processing" ${status === 'processing' ? 'selected' : ''}>Processing</option>
+                    <option value="delivered" ${status === 'delivered' ? 'selected' : ''}>Delivered</option>
+                    <option value="shipped" ${status === 'shipped' ? 'selected' : ''}>Shipped</option>
+                </select>
+            </td>
+            <td>${product}</td>
+            <td>
+                <div class="crud-buttons">
+                    <button onclick="deleteOrder(this)">Delete</button>
+                </div>
+            </td>
+        `;
+
+        // Append the new row to the table body
+        document.getElementById('recentOrdersBody').appendChild(newRow);
+
+        // Clear the form after submission
+        document.getElementById('orderForm').reset();
+    });
+
+    document.getElementById('stockForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Get form data
+        const item = document.getElementById('stockItem').value;
+        const inStock = document.getElementById('stockIn').value;
+        const outStock = document.getElementById('stockOut').value;
+        const date = document.getElementById('stockDate').value;
+
+        // Create a new row for the stock table
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>${item}</td>
+            <td>${inStock}</td>
+            <td>${outStock}</td>
+            <td>${date}</td>
+            <td>
+                <div class="crud-buttons">
+                    <button onclick="deleteStock(this)">Delete</button>
+                </div>
+            </td>
+        `;
+
+        // Append the new row to the table body
+        document.getElementById('stockBody').appendChild(newRow);
+
+        // Clear the form after submission
+        document.getElementById('stockForm').reset();
+    });
+
+    function deleteOrder(button) {
+        const row = button.closest('tr');
+        row.parentNode.removeChild(row);
+    }
+
+    function deleteStock(button) {
+        const row = button.closest('tr');
+        row.parentNode.removeChild(row);
+    }
+    </script>
+</body>
+</html>

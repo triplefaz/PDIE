@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fish Market</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            background-color: #fff;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .top-bar span {
+            color: #333;
+        }
+
+        .account-options a {
+            margin-left: 10px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 5px 0;
+        }
+
+        .logo img {
+            margin: 0;
+            height: auto;
+            width: 19%;
+        }
+
+        nav {
+            background-color: #90EE90;
+            width: 100%;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li {
+            display: inline-block;
+            margin: 10px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .search-cart {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #fff;
+            border-top: 1px solid #ccc;
+        }
+
+        .search-cart input[type="text"] {
+            padding: 5px;
+            margin-right: 10px;
+        }
+
+        .search-cart .cart {
+            margin-left: 20px;
+            text-decoration: none;
+            color: black;
+            font-size: 18px;
+        }
+
+        main {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .products {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        .product {
+            flex: 0 1 22%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .product img {
+            width: 100%;
+            height: auto;
+        }
+
+        .product h3 {
+            margin: 10px 0;
+        }
+
+        .product p {
+            margin: 10px 0;
+        }
+
+        .product button {
+            background-color: #90EE90;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .product button:hover {
+            background-color: #76c76c;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+
+        /* Form styles */
+        .contact-form {
+            text-align: center;
+        }
+
+        .contact-form label {
+            font-weight: bold;
+        }
+
+        .contact-form input[type="text"],
+        .contact-form input[type="email"],
+        .contact-form textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 6px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .contact-form textarea {
+            height: 150px;
+        }
+
+        .contact-form button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .contact-form button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="top-bar">
+
+            <div class="account-options">
+                <a href="#">MY ACCOUNT</a> -
+                <a href="{% url 'cart' %}">CHECKOUT</a>
+            </div>
+        </div>
+
+        <div class="search-cart">
+            <input type="text" placeholder="Search">
+            <button type="button">🔍</button>
+            <a href="{% url 'cart' %}" class="cart">🛒 0</a>
+        </div>
+
+        <div class="logo">
+            <img src="{% static 'logo_1.png' %}" alt="Logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">HOME</a></li>
+                <li><a href="{% url 'freshfish' %}">FRESH FISH</a></li>
+                <li><a href="{% url 'freshshellfish' %}">FRESH SHELLFISH</a></li>
+                <li><a href="#">FROZEN SHELLFISH</a></li>
+                <li><a href="#" id="contact-link">CONTACT US</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h2>FROZEN SHELLFISH</h2>
+        <div class="products">
+            <div class="product">
+                <img src="{% static 'isiKerang.jpg' %}" alt="ISI KERANG">
+                <h3>ISI KERANG BEKU</h3>
+                <p>RM 29</p>
+                <button class="add-to-cart-btn" data-product="ISI KERANG BEKU" data-price="29">Add to Cart</button>
+            </div>
+            <div class="product">
+                <img src="{% static 'isiKetamBunga.jpg' %}" alt="ISI KETAM BUNGA">
+                <h3>ISI KETAM BUNGA BEKU</h3>
+                <p>RM 45</p>
+                <button class="add-to-cart-btn" data-product="ISI KETAM BUNGA" data-price="45">Add to Cart</button>
+            </div>
+
+        </div>
+        <div class="products">
+            <div class="product">
+                <img src="{% static 'udangkupas.jpg' %}" alt="ISI UDANG">
+                <h3>ISI UDANG KUPAS BEKU</h3>
+                <p>RM 39</p>
+                <button class="add-to-cart-btn" data-product="ISI UDANG KUPAS BEKU" data-price="39">Add to Cart</button>
+            </div>
+            <div class="product">
+                <img src="{% static 'isiUdangGalah.jpg' %}" alt="ISI UDANG GALAH">
+                <h3>ISI UDANG GALAH BEKU</h3>
+                <p>RM 65</p>
+                <button class="add-to-cart-btn" data-product="ISI UDANG GALAH" data-price="65">Add to Cart</button>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Contact Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="contact-form">
+                <h2>Contact Us</h2>
+                <form action="/submit-contact/" method="post">
+                    <label for="nophone">No Phone: 017-465 3142</label><br><br>
+                    <label for="email">Email: amerhisyam04@gmail.com</label><br><br>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get the modal
+        var modal = document.getElementById('contactModal');
+
+        // Get the button that opens the modal
+        var contactLink = document.getElementById("contact-link");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0]; 
+
+        // When the user clicks on the button, open the modal
+        contactLink.onclick = function () {
+            modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Get all Add to Cart buttons
+        var addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+
+        // Add click event listeners to each button
+        addToCartButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                var productName = button.getAttribute('data-product');
+                var productPrice = parseFloat(button.getAttribute('data-price'));
+
+                // Call a function to add the product to the cart
+                addToCart(productName, productPrice);
+            });
+        });
+
+        // Function to add the product to the cart
+        function addToCart(productName, productPrice) {
+            // Retrieve the existing cart from local storage
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // Add the new product to the cart
+            cart.push({ productName: productName, productPrice: productPrice });
+
+            // Save the updated cart back to local storage
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            // Update the cart count
+            updateCartCount();
+
+            // Alert or notification for adding to cart (optional)
+            alert(`Added ${productName} to cart!`);
+
+            // Debugging: Log the current cart
+            console.log("Current cart:", cart);
+        }
+
+        // Function to update the cart count
+        function updateCartCount() {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let cartCountElement = document.querySelector('.cart');
+            cartCountElement.textContent = `🛒 ${cart.length}`;
+        }
+
+        // Call this function on page load to initialize the cart count
+        updateCartCount();
+    </script>
+</body>
+
+</html>
